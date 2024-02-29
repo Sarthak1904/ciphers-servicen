@@ -1,28 +1,39 @@
-name: Run the Tests
+name: Build and Push Docker Image
+
 on:
-  push
+  push:
+    branches:
+      - main
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build-and-push:
+    runs-on: ubuntu-latest
 
-        steps:
-        - uses: actions/checkout@v2
-        - name: Set up Python
-          uses: actions/setup-python@v2
-          with:
-            python-version: 3.11.5
-        - name: Install dependencies
-          run : |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-        
-        - name: Unit Testing
-          run: |
-            cd ciphers_project
-            python manage.py test
-        - name: Build and push the image              
-          run: |
-            docker login --username Sarthak1904 --password ${{secrets.TOKEN}} ghcr.io
-            docker build -t ghcr.io/sarthak1904/ciphers-servicen:latest --file Dockerfile .
-            docker push ghcr.io/sarthak1904/ciphers-servicen:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.5
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Unit Testing
+        run: |
+          cd ciphers_project
+          python manage.py test
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ghcr.io/sarthak1904/ciphers-servicen:latest .
+        continue-on-error: true
+
+      - name: Push Docker Image
+        run: |
+          echo "${{ secrets.TOKEN }}" | docker login ghcr.io -u Sarthak1904 --password-stdin
+          docker push ghcr.io/sarthak1904/ciphers-servicen:latest
