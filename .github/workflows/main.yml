@@ -1,28 +1,31 @@
 name: Run the Tests
+
 on:
   push
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-        steps:
-        - uses: actions/checkout@v2
-        - name: Set up Python
-          uses: actions/setup-python@v2
-          with:
-            python-version: 3.11.5
-        - name: Install dependencies
-          run : |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
-        
-        - name: Unit Testing
-          run: |
-            cd ciphers_project
-            python manage.py test
-        - name: Build and push the image
-          run: |
-            docker login --username Sarthak1904 --password ${{secrets.SARTHAK}} ghcr.io
-            docker build -t ghcr.io/sarthak1904/practicum_4-main-master:latest --file dockerfile .
-            docker push ghcr.io/sarthak1904/practicum_4-main-master:latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.5
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Unit Testing
+        run: |
+          cd ciphers_project
+          python manage.py test
+
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.SARTHAK_LATEST }} | docker login ghcr.io --username Sarthak1904 --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ghcr.io/sarthak1904/primes-service:latest .
+          docker push ghcr.io/sarthak1904/primes-service:latest
