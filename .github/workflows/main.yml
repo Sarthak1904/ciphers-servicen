@@ -21,3 +21,8 @@ jobs:
           run: |
             cd ciphers_project
             python manage.py test
+        - name: Build and push the image
+          run: |
+            docker login --username Sarthak1904 --password ${{secrets.SARTHAK}} ghcr.io
+            docker build -t ghcr.io/sarthak1904/practicum_4-main-master:latest --file dockerfile .
+            docker push ghcr.io/sarthak1904/practicum_4-main-master:latest
