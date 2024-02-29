@@ -23,7 +23,7 @@ jobs:
           python manage.py test
 
       - name: Login to GitHub Container Registry
-        run: echo ${{ secrets.SARTHAK_LATEST }} | docker login ghcr.io --username Sarthak1904 --password-stdin
+        run: echo ${{ secrets.SARTHAK_LATEST }} | docker login ghcr.io --username sarthak1904 --password-stdin
 
       - name: Build and Push Docker Image
         run: |
